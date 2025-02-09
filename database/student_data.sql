@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS student_data
-USE student_data
+CREATE DATABASE IF NOT EXISTS student_data;
+USE student_data;
 
 DROP TABLE IF EXISTS subject_marks;
 DROP TABLE IF EXISTS overall_results;
@@ -58,17 +58,3 @@ CREATE TABLE overall_results (
     FOREIGN KEY (usn) REFERENCES students(usn),
     UNIQUE KEY unique_student_result_sem (usn, semester)
 );
-
-SELECT * FROM subjects;
-SELECT * FROM students;
-SELECT * FROM subject_marks;
-SELECT * FROM overall_results;
-SELECT * FROM student_semester;
-
-SET FOREIGN_KEY_CHECKS = 0;
-TRUNCATE TABLE students;
-TRUNCATE TABLE subjects;
-TRUNCATE TABLE subject_marks;
-TRUNCATE TABLE student_semester;
-TRUNCATE TABLE overall_results;
-SET FOREIGN_KEY_CHECKS = 1;

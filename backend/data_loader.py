@@ -189,40 +189,51 @@ def load_overall_results(df, cursor):
         logger.error(f"Error loading overall results: {e}")
         raise
 
-def main():
-    file_path = r"C:\Users\Vignesh\Documents\GitHub\Student-Performance-Analytics\data\combined_output.csv"
-    
+
+def process_csv_data(file_path: str) -> dict:
+    """Process CSV file and return results summary"""
     try:
         # Read CSV file
         df = pd.read_csv(file_path)
-        logger.info(f"Successfully read CSV file: {file_path}")
         
         # Connect to database
         connection = connect_to_db()
         cursor = connection.cursor()
         
-        # Load data in correct order
-        load_students(df, cursor)
-        load_student_semesters(df, cursor)
-        subject_id_map = load_subjects(df, cursor)
-        load_subject_marks(df, cursor, subject_id_map)
-        load_overall_results(df, cursor)
+        # Initialize counters
+        stats = {
+            'total_records': len(df),
+            'students_processed': 0,
+            'marks_processed': 0,
+            'errors': []
+        }
         
-        # Commit changes and close connection
-        connection.commit()
-        logger.info("Successfully committed all changes")
+        try:
+            # Load data in correct order
+            load_students(df, cursor)
+            stats['students_processed'] = len(df['USN'].unique())
+            
+            load_student_semesters(df, cursor)
+            subject_id_map = load_subjects(df, cursor)
+            load_subject_marks(df, cursor, subject_id_map)
+            stats['marks_processed'] = len(df) * len(subject_id_map)
+            
+            load_overall_results(df, cursor)
+            
+            # Commit changes
+            connection.commit()
+            
+        except Exception as e:
+            connection.rollback()
+            stats['errors'].append(str(e))
+            raise
+        
+        finally:
+            cursor.close()
+            connection.close()
+        
+        return stats
         
     except Exception as e:
-        logger.error(f"Error in main process: {e}")
-        if 'connection' in locals():
-            connection.rollback()
-        raise
-    finally:
-        if 'cursor' in locals():
-            cursor.close()
-        if 'connection' in locals():
-            connection.close()
-            logger.info("Database connection closed")
-
-if __name__ == "__main__":
-    main()
+        logging.error(f"Error processing file: {e}")
+        return {'error': str(e)}

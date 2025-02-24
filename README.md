@@ -45,19 +45,7 @@ The Student Performance Analytics Dashboard is an interactive Power BI dashboard
 - **subjects**
   - **Key Columns**: `Subject_ID`, `Subject_Name`
   - **Description**: Stores subject details.
-
-## Contributing
-1. Fork the repository.
-2. Create a new branch.
-3. Commit changes and push.
-4. Submit a Pull Request.
-
+  - 
 ## License
 This project is licensed under the **MIT License**.
-
-## Authors
-- **Your Name**
-- **Team Member 1**
-- **Team Member 2**
-- **Team Member 3**
 
